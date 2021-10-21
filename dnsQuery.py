@@ -36,15 +36,8 @@ layout = [
     # ],
     [sg.Submit("Submit"), sg.Button("Clear"), sg.Button("Exit")],
     [
-        sg.Multiline(
-            size=(80, 30),
-            justification="l",
-            key="-textbox-",
-            pad=(10, 10, (10, 10)),
-            background_color="LightGrey",
-            disabled=False,
-            text_color="black",
-        )
+        sg.Multiline(size=(80, 30), justification="l", key="-textbox-", pad=(10, 10, (10, 10)), 
+        background_color="LightGrey", disabled=False, text_color="black",)
     ],
 ]
 
