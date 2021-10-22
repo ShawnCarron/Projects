@@ -22,6 +22,7 @@ layout = [
         sg.Text("Domain Name: "), sg.InputText(key="-getHost-", background_color="LightGrey", 
         justification="left", text_color="black", default_text="",),
     ],
+    
     [
         sg.Text("Select Lookup:"),
         sg.Radio("A-Record", "RADIO1", key="-radhost-"),
@@ -29,12 +30,9 @@ layout = [
         sg.Radio("MX Records", "RADIO1", key="-radMX-"),
         sg.Radio("Full", "RADIO1", key="-radFull-", default=True),
     ],
-    # [
-    #     sg.Text("Select DNS:"),
-    #     sg.Radio("TekSavvy DNS", "RADIO2", key="-radtek-", default=True),
-    #     sg.Radio("Google DNS", "RADIO2", key="-radgoogle-"),
-    # ],
+
     [sg.Submit("Submit"), sg.Button("Clear"), sg.Button("Exit")],
+
     [
         sg.Multiline(size=(80, 30), justification="l", key="-textbox-", pad=(10, 10, (10, 10)), 
         background_color="LightGrey", disabled=False, text_color="black",)
