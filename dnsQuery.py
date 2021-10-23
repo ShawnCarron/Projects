@@ -1,5 +1,5 @@
 """
-  A simple DNS calculator that returns host and whois data because the agents in my department are dumb.
+  A simple DNS calculator that returns host and whois data to assist frontline agents.
   
   Author:     Shawn Carron
   Email:      shawn.carron@gmail.com
