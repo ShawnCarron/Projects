@@ -1,12 +1,13 @@
 """
-  A simple DNS calculator that returns host and whois data to assist frontline agents.
+A simple DNS calculator that returns host and whois data to assist frontline agents.
   
-  Author:     Shawn Carron
-  Email:      shawn.carron@gmail.com
-  Modified:   2021-10-22
-  
+Author:     Shawn Carron
+Email:      shawn.carron@gmail.com
+Modified:   2021-10-23
+Version:    1.9
+
 """
-import pyperclip
+#import pyperclip as pc
 import PySimpleGUI as sg
 import dns.resolver
 import socket
@@ -18,27 +19,27 @@ import whois
 sg.theme("DefaultNoMoreNagging")
 
 # Right click Menu
-
 # right_click_menu = ['', ['Paste']]
 
 # Set Layout
 layout = [
     [   sg.Text("Domain Name: "), 
-        sg.InputText(key="-getHost-", background_color="LightGrey", justification="left", text_color="black", default_text="",)
+        sg.InputText(key="-getHost-", background_color="Ivory", justification="left", text_color="black", right_click_menu=None)
     ],
 
     [   sg.Text("Select Lookup:"),
-        sg.Radio("A-Record", "RADIO1", key="-radhost-"),
-        sg.Radio("Whois", "RADIO1", key="-radwhois-"),
-        sg.Radio("MX Records", "RADIO1", key="-radMX-"),
-        sg.Radio("Full", "RADIO1", key="-radFull-", default=True) 
+        sg.Radio("A-Record", "radio1", key="-radhost-"),
+        sg.Radio("MX Records", "radio1", key="-radMX-"),
+        sg.Radio("Whois", "radio1", key="-radwhois-"),
+        sg.Radio("Full", "radio1", key="-radFull-", default=True) 
     ],
 
-    [   sg.Submit("Submit", button_color="Blue"), sg.Button("Clear", button_color="Blue"), sg.Button("Exit",)
+    [   sg.Submit("Submit", button_color="Blue"),  
+        sg.Button("Clear", button_color="Blue"), 
+        sg.Button("Exit")
     ],
 
-    [   sg.Multiline(size=(80, 30), justification="l", key="-textbox-", pad=(10, 10, (10, 10)), 
-        background_color="LightGrey", disabled=False, text_color="black",)
+    [   sg.Multiline(key="-textbox-", background_color="Ivory", justification="left", text_color="black", size=(80, 30), pad=(10, 10, (10, 10)))
     ],
         ]
 
@@ -48,93 +49,92 @@ window = sg.Window("DNS Tools", layout, size=(500, 400), resizable=False)
 # ------------------------FUNCTIONS------------------------##
 
 def host_lookup():
-    # Get the IP address for the domain.
+    hostName = values["-getHost-"]
     try:
-        hostName = values["-getHost-"]
-        getIPAddr = socket.gethostbyname(f"{hostName}")
-        # Reverse IP lookup.
-        ptr = socket.gethostbyaddr(getIPAddr)[0]
+        getIPAddr = socket.gethostbyname(hostName) # Get the IP address for the domain.
+        ptr = socket.gethostbyaddr(getIPAddr)[0] # Reverse IP lookup to see what server this host lives on.
         window["-textbox-"].print(f"The IP for {hostName} is: {getIPAddr}. \nThis domain is hosted on: {ptr}\n ")
     except Exception as err:
         window["-textbox-"].print("The DNS query name does not exist: ", err)
+    return()
 
 ##----------------------------------------------------------------##
 
 def mx_lookup():
     # Get the MX records.
-    try:
-        hostName = values["-getHost-"]
+    hostName = values["-getHost-"]
+    try: 
         result = dns.resolver.resolve(hostName, "MX",)
-        window["-textbox-"].print(f"The MX Records for {hostName} are:\n")
+        window["-textbox-"].print(f"The MX Records for {hostName} are:")
         for rdata in result:
             window["-textbox-"].print(rdata.exchange)
     except Exception as err:
         window["-textbox-"].update(err)
-
+    return()
 ##----------------------------------------------------------------##
 
 def whois_lookup():
     # Get Whois data
+    hostName = values["-getHost-"]
     try:
-        hostName = values["-getHost-"]
         w = whois.whois(hostName)
         tld = hostName.split(".")[-1]
+        nameservers = dns.resolver.resolve(hostName, "NS")
         if tld == "ca":
-            nameservers = dns.resolver.resolve(hostName, "NS")
             window["-textbox-"].print("Registrar: ", w.registrar, "\nExpiration Date: ", w.expiration_date, "\n",)
             window["-textbox-"].print("Name Servers: ")
             for data in nameservers:
                 window["-textbox-"].print(data)
-        else:
+        else: # same for now but .ca and the other tld's are different in how they display their data.
             window["-textbox-"].print("Registrar: ", w.registrar, "\nExpiration Date: ", w.expiration_date, "\n",)
-            window["-textbox-"].print("Name Servers:\n", ", ".join(w.name_servers[0:2]).lower())
+            window["-textbox-"].print("Name Servers: ")
+            for data in nameservers:
+                window["-textbox-"].print(data)
     except Exception as err:
         window["-textbox-"].print("The DNS query name does not exist: ", err)
-
+    return()
 ##----------------------------------------------------------------##
 
 def full_lookup():
+    hostName = values["-getHost-"]
     try:
-        # Get the IP address for the domain.
-        hostName = values["-getHost-"]
-        getIPAddr = socket.gethostbyname(f"{hostName}")
-        # Reverse IP lookup.
-        ptr = socket.gethostbyaddr(getIPAddr)[0]
+        getIPAddr = socket.gethostbyname(hostName) # Get the IP address for the domain.
+        ptr = socket.gethostbyaddr(getIPAddr)[0] # Reverse IP lookup to see what server this host lives on. May change later.
         window["-textbox-"].print(f"The IP for {hostName} is: {getIPAddr}. \nThis domain is hosted on: {ptr}\n ")
-        window["-textbox-"].print("")
     except Exception as err:
         window["-textbox-"].print("The DNS query name does not exist: ", err)
         window["-textbox-"].print("")
     try:
         # Getting the MX Records.
         result = dns.resolver.resolve(hostName, "MX",)
-        window["-textbox-"].print(f"The MX Records for {hostName} are:\n")
+        window["-textbox-"].print(f"The MX Records for {hostName} are:")
         for rdata in result:
             window["-textbox-"].print(rdata.exchange)
         window["-textbox-"].print("")
     except Exception as err:
-           window["-textbox-"].print(err)
-           window["-textbox-"].print("")   
+        window["-textbox-"].update(err)
+        window["-textbox-"].print("")   
     try:
-        # Whois Section
         w = whois.whois(hostName)
         tld = hostName.split(".")[-1]
+        nameservers = dns.resolver.resolve(hostName, "NS")
         if tld == "ca":
-            nameservers = dns.resolver.resolve(hostName, "NS")
             window["-textbox-"].print("Registrar: ", w.registrar, "\nExpiration Date: ", w.expiration_date, "\n",)
             window["-textbox-"].print("Name Servers: ")
             for data in nameservers:
                 window["-textbox-"].print(data)
-        else:
+        else: # same as the .ca for now but .ca and the other tld's are different in how they display their data. May change later.
             window["-textbox-"].print("Registrar: ", w.registrar, "\nExpiration Date: ", w.expiration_date, "\n",)
-            window["-textbox-"].print("Name Servers:\n", ", ".join(w.name_servers[0:2]).lower()
-            )
+            window["-textbox-"].print("Name Servers: ")
+            for data in nameservers:
+                window["-textbox-"].print(data)
     except Exception as err:
         window["-textbox-"].print("The DNS query name does not exist: ", err)
-
+    return()
 
 def clear_screen():
     window["-textbox-"].update("")
+    return()
 
 
 ##---------------------EVENT LOOP---------------------##
@@ -151,7 +151,7 @@ while True:
     #         window['-getHost-'].Widget.delete("sel.first", "sel.last")
     #     except:                     # Exception if no selection
     #         pass
-    #     pasteText = pyperclip.paste()    # Paste into Input field -getHost-
+    #     pasteText = pc.paste()    # Paste into Input field -getHost-
     #     window['-getHost-'].Widget.insert("insert", pasteText)
     # else:
     #     pass
