@@ -48,9 +48,9 @@ window = sg.Window("DNS Tools", layout, size=(500, 400), resizable=False)
 
 # ------------------------FUNCTIONS------------------------##
 
-def host_lookup():
-    hostName = values["-getHost-"]
+def host_lookup(): 
     try:
+        hostName = values["-getHost-"]
         getIPAddr = socket.gethostbyname(hostName) # Get the IP address for the domain.
         ptr = socket.gethostbyaddr(getIPAddr)[0] # Reverse IP lookup to see what server this host lives on.
         window["-textbox-"].print(f"The IP for {hostName} is: {getIPAddr}. \nThis domain is hosted on: {ptr}\n ")
@@ -58,16 +58,17 @@ def host_lookup():
         window["-textbox-"].print("The DNS query name does not exist: ", err)
     return()
 
-##----------------------------------------------------------------##
+##----------------------------------------------------------##
 
 def mx_lookup():
     # Get the MX records.
-    hostName = values["-getHost-"]
+    
     try: 
-        result = dns.resolver.resolve(hostName, "MX",)
+        hostName = values["-getHost-"]
+        result = dns.resolver.query(hostName, "MX",)
         window["-textbox-"].print(f"The MX Records for {hostName} are:")
         for rdata in result:
-            window["-textbox-"].print(rdata.exchange)
+            window["-textbox-"].print(rdata.exchange, 'with a preference of', rdata.preference)
     except Exception as err:
         window["-textbox-"].update(err)
     return()
@@ -75,11 +76,11 @@ def mx_lookup():
 
 def whois_lookup():
     # Get Whois data
-    hostName = values["-getHost-"]
     try:
+        hostName = values["-getHost-"]
         w = whois.whois(hostName)
         tld = hostName.split(".")[-1]
-        nameservers = dns.resolver.resolve(hostName, "NS")
+        nameservers = dns.resolver.query(hostName, "NS")
         if tld == "ca":
             window["-textbox-"].print("Registrar: ", w.registrar, "\nExpiration Date: ", w.expiration_date, "\n",)
             window["-textbox-"].print("Name Servers: ")
@@ -96,8 +97,9 @@ def whois_lookup():
 ##----------------------------------------------------------------##
 
 def full_lookup():
-    hostName = values["-getHost-"]
+    
     try:
+        hostName = values["-getHost-"]
         getIPAddr = socket.gethostbyname(hostName) # Get the IP address for the domain.
         ptr = socket.gethostbyaddr(getIPAddr)[0] # Reverse IP lookup to see what server this host lives on. May change later.
         window["-textbox-"].print(f"The IP for {hostName} is: {getIPAddr}. \nThis domain is hosted on: {ptr}\n ")
@@ -106,10 +108,10 @@ def full_lookup():
         window["-textbox-"].print("")
     try:
         # Getting the MX Records.
-        result = dns.resolver.resolve(hostName, "MX",)
+        result = dns.resolver.query(hostName, "MX",)
         window["-textbox-"].print(f"The MX Records for {hostName} are:")
         for rdata in result:
-            window["-textbox-"].print(rdata.exchange)
+            window["-textbox-"].print('Host', rdata.exchange, 'has preference', rdata.preference)
         window["-textbox-"].print("")
     except Exception as err:
         window["-textbox-"].update(err)
@@ -117,7 +119,7 @@ def full_lookup():
     try:
         w = whois.whois(hostName)
         tld = hostName.split(".")[-1]
-        nameservers = dns.resolver.resolve(hostName, "NS")
+        nameservers = dns.resolver.query(hostName, "NS")
         if tld == "ca":
             window["-textbox-"].print("Registrar: ", w.registrar, "\nExpiration Date: ", w.expiration_date, "\n",)
             window["-textbox-"].print("Name Servers: ")
