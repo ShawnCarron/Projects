@@ -24,7 +24,8 @@ sg.theme("DefaultNoMoreNagging")
 # Set Layout
 layout = [
     [   sg.Text("Domain Name: "), 
-        sg.InputText(key="-getHost-", background_color="Ivory", justification="left", text_color="black", right_click_menu=None)
+        sg.InputText(key="-getHost-", background_color="Ivory", 
+        justification="left", text_color="black", right_click_menu=None)
     ],
 
     [   sg.Text("Select Lookup:"),
@@ -39,7 +40,8 @@ layout = [
         sg.Button("Exit")
     ],
 
-    [   sg.Multiline(key="-textbox-", background_color="Ivory", justification="left", text_color="black", size=(80, 30), pad=(10, 10, (10, 10)))
+    [   sg.Multiline(key="-textbox-", background_color="Ivory", 
+        justification="left", text_color="black", size=(80, 30), pad=(10, 10, (10, 10)))
     ],
         ]
 
