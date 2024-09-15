@@ -1,4 +1,4 @@
-# CustomKey not working if there are uppercase letters in the string
+# CustomKey not working if there are uppercase letters in the string, need to fix
 print('Enter your message:')
 text = input()
 print('Enter the key: ')
