@@ -29,12 +29,16 @@ def collatz_sequence(x):
       seq.append(x)
   return seq
 
-def find_patterns(seq):
+def find_patterns():
   pass
+  
+def count_steps():
+  # Test to see how many steps it took to get to 4-2-1
+  count = len(seq) - 3
+  return(f"{x} was your starting integer and the 4-2-1 pattern appeared after {count} steps.")
 
-# Print out the collatz sequence
+
+
+# Print out the collatz conjecture sequence
 print(collatz_sequence(x))
-
-# Test to see how many steps it took to get to 4-2-1
-count = len(seq) - 3
-print(f"{x} was your starting integer and the 4-2-1 pattern appeared after {count} steps.")
+print(count_steps())
