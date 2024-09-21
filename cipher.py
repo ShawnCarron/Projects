@@ -1,6 +1,7 @@
-# CustomKey not working if there are uppercase letters in the string, need to fix
+# CustomKey not working if there are uppercase letters in the string
 print('Enter your message:')
 text = input()
+
 print('Enter the key: ')
 customKey = input()
 #text = 'mrttaqrhknsw ih puggrur'
@@ -24,8 +25,8 @@ def vigenere(message, key, direction = 1):
             # Define the offset and the encrypted/decrypted letter
             offset = alphabet.index(keyChar)
             index = alphabet.find(char)
-            newIndex = (index + offset * direction) % len(alphabet)
-            finalMessage += alphabet[newIndex]
+            shiftedIndex = (index + offset * direction) % len(alphabet)
+            finalMessage += alphabet[shiftedIndex]
     
     return finalMessage
 
@@ -37,6 +38,9 @@ def decrypt(message, key):
 
 print(f'\nEncrypted text: {text}')
 print(f'Key: {customKey}')
+
+enryption = encrypt(text, customKey)
+print(f'\nEncrypted text: {enryption}')
 
 decryption = decrypt(text, customKey)
 print(f'\nDecrypted text: {decryption}\n')
